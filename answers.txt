@@ -94,5 +94,5 @@ Hint: The sum for u is 101, but again it's foo's local v that matters.
 
 - calls foo(u, 13) where local v in foo = 42 and calls bar(add)
 - in bar(add) local u is set to w which = 17 and calls add(v) where is 42 cause of the local v in foo
-- in add(z) we have u 42 + 42 + 42 where it is using local v in foo, global u, and z = 42
-- final output is global u = 126
+- in add(z) we have u 42 + 17 + 42 where it is using local v in foo, local u, and z = 42
+- final output is global u = 101
