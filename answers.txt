@@ -1,0 +1,98 @@
+Problem 1: Parse Tree and Leftmost Derivation
+A = B * (C * (A + B))
+
+Parse Tree:
+
+Statement
+├──> Assignment
+│  ├──> Identifier (A)
+│  └──> Expression
+│      ├──> Term
+│      │   ├──> Term
+│      │   │   └──> Factor
+│      │   │       └──> Identifier (B)
+│      │   └──> *
+│      │   └──> Factor
+│      │      └──> ( Expression )
+│      │        ├──> Term
+│      │        │   ├──> Term
+│      │        │   │   └──> Factor
+│      │        │   │       └──> Identifier (C)
+│      │        │   └──> *
+│      │        │   └──> Factor
+│      │        │       └──> ( Expression )
+│      │        │           ├──> Term
+│      │        │           │   └──> Factor
+│      │        │           │       └──> Identifier (A)
+│      │        │           └──> +
+│      │        │           └──> Term
+│      │        │               └──> Factor
+│      │        │                   └──> Identifier (B)
+
+Leftmost Derivation:
+
+Statement
+Assignment -> Identifier = Expression
+A = Expression
+A = Expression + Term
+A = Term + Term
+A = Term * Factor + Term
+A = Factor * Factor + Term
+A = B * Factor + Term
+A = B * (Expression) + Term
+A = B * (Expression + Term) + Term
+A = B * (Term + Term) + Term
+A = B * (Term * Factor + Term) + Term
+A = B * (Factor * Factor + Term) + Term
+A = B * (C * Factor + Term) + Term
+A = B * (C * (Expression) + Term) + Term
+A = B * (C * (Expression + Term) + Term) + Term
+A = B * (C * (Term + Term) + Term) + Term
+A = B * (C * (Factor + Term) + Term) + Term
+A = B * (C * (A + B) + Term) + Term
+A = B * (C * (A + B))
+
+Problem 2: Scope Concepts
+
+int u = 42;
+int v = 69;
+int w = 17;
+
+proc add( z:int )
+	u := v + u + z;
+
+proc bar( fun:proc )
+	int u := w;
+	fun(v);
+
+proc foo( x:int, w:int )
+	int v := x;
+	bar(add);
+
+main
+	foo(u, 13);
+	print(u);
+end;
+
+a. Using Static Scope, what is printed to the screen?
+
+- calls foo(u, 13) where v = u = 42 then calls bar(add)
+- bar(add) where local u = w = 17 but calls global v with fun(v)
+- so in add, u = 69 + 42 + 69
+- so final output where global u = 180 
+
+b. Using Dynamic Scope with Deep Binding, what is printed to the screen?
+Hint: The sum for u is 126, but due to deep binding, it's foo's local v that gets involved.
+
+- calls foo(u, 13) where local v in foo = 42 but with bar(add), v's reference uses the global v which = 69
+- now in bar(add), the local u is set to w which = 17 and calls add(v) which uses the global v = 69
+- now in add(z) u = 69 + 42 + 69 which uses global v, global u, and z = 69
+- final output is global u = 180
+
+c. Using Dynamic Scope with Shallow Binding, what is printed to the screen?
+Hint: The sum for u is 101, but again it's foo's local v that matters.
+
+- calls foo(u, 13) where local v in foo = 42 and calls bar(add)
+- in bar(add) local u is set to w which = 17 and calls add(v) where is 42 cause of the local v in foo
+- in add(z) we have u 42 + 42 + 42 where it is using local v in foo, global u, and z = 42
+- final output is global u = 126
